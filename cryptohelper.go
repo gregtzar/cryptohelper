@@ -3,8 +3,12 @@ package cryptohelper
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/hmac"
 	crand "crypto/rand"
+	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/base64"
+	"encoding/hex"
 	"errors"
 	mrand "math/rand"
 	"strconv"
@@ -12,9 +16,11 @@ import (
 )
 
 const (
-	AES128KeyLength = 16
-	AES192KeyLength = 24
-	AES256KeyLength = 32
+	AES128KeyLength     = 16
+	AES192KeyLength     = 24
+	AES256KeyLength     = 32
+	HMACSHA256KeyLength = 32
+	HMACSHA512KeyLength = 64
 )
 
 var (
@@ -49,35 +55,53 @@ func GenerateCryptoSequence(length int) ([]byte, error) {
 
 // GenerateAES128Key is an alias for GenerateCryptoSequence(16).
 // An AES 128-bit key is expressed here as a byte slice. To obtain the plain text equivalent of this
-// key for storage use the BytesToBase64 function.
+// key for storage use the BytesToBase64 or BytesToHex function.
 func GenerateAES128Key() ([]byte, error) {
 	return GenerateCryptoSequence(AES128KeyLength)
 }
 
 // GenerateAES192Key is an alias for GenerateCryptoSequence(24).
 // An AES 192-bit key is expressed here as a byte slice. To obtain the plain text equivalent of this
-// key for storage use the BytesToBase64 function.
+// key for storage use the BytesToBase64 or BytesToHex function.
 func GenerateAES192Key() ([]byte, error) {
 	return GenerateCryptoSequence(AES192KeyLength)
 }
 
 // GenerateAES256Key is an alias for GenerateCryptoSequence(32).
 // An AES 256-bit key is expressed here as a byte slice. To obtain the plain text equivalent of this
-// key for storage use the BytesToBase64 function.
+// key for storage use the BytesToBase64 or BytesToHex function.
 func GenerateAES256Key() ([]byte, error) {
 	return GenerateCryptoSequence(AES256KeyLength)
 }
 
+// GenerateHMACSHA256Key is an alias for GenerateCryptoSequence(32).
+// An HMAC SHA-256 key is expressed here as a byte slice. To obtain the plain text equivalent of this
+// key for storage use the BytesToBase64 or BytesToHex function.
+func GenerateHMACSHA256Key() ([]byte, error) {
+	return GenerateCryptoSequence(HMACSHA256KeyLength)
+}
+
+// GenerateHMACSHA512Key is an alias for GenerateCryptoSequence(64).
+// An HMAC SHA-256 key is expressed here as a byte slice. To obtain the plain text equivalent of this
+// key for storage use the BytesToBase64 or BytesToHex function.
+func GenerateHMACSHA512Key() ([]byte, error) {
+	return GenerateCryptoSequence(HMACSHA512KeyLength)
+}
+
+// EncryptTextAESGCM encrypts a chunk of plaintext using AES 128/192/256 symmetrical encryption with the
+// strength based on the key length. 128-bit requires a key length of 16, 192-bit requires a key length of 24,
+// and 256-bit requires a key length of 32. An error will be returned if the key is not of an acceptable
+// length. The mode of operation used for the block cipher is GCM (Galois/Counter Mode). A 12-byte random
+// nonce will be prepended to the final ciphertext and must be parsed back out and used during the decryption
+// process. If the DecryptTextAESGCM function is used to decrypt the ciphertext then the nonce will be
+// handled transparently.
 func EncryptTextAESGCM(key []byte, plaintext []byte) ([]byte, error) {
 
-	// Create a new symmetric key cryptographic block cipher based on the key length
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}
 
-	// Select the mode of operation we will use for this block cipher.
-	// GCM (Galois/Counter Mode) is a good standard default to use.
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
 		return nil, err
@@ -99,6 +123,11 @@ func EncryptTextAESGCM(key []byte, plaintext []byte) ([]byte, error) {
 
 }
 
+// EncryptTextAESGCM decrypts a chunk of ciphertext which was encrypted using AES 128/192/256
+// symmetrical encryption with the mode of operation used for the block cipher being GCM. This
+// function requires the same key used to encrypt the plaintext and also expects the 12-byte random
+// nonce used to encrypt the plaintext to be prepended to the ciphertext. If the EncryptTextAESGCM
+// function was used to generate the ciphertext then the nonce will be handled transparently.
 func DecryptTextAESGCM(key []byte, ciphertext []byte) ([]byte, error) {
 
 	block, err := aes.NewCipher(key)
@@ -120,7 +149,7 @@ func DecryptTextAESGCM(key []byte, ciphertext []byte) ([]byte, error) {
 	// Parse the nonse from the ciphertext
 	nonce, ciphertext := ciphertext[:noncesize], ciphertext[noncesize:]
 
-	// Decrypt the ciphertext using the nonce and they key.
+	// Decrypt the ciphertext using the nonce and the key.
 	plaintext, err := aesgcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
 		return nil, err
@@ -129,14 +158,52 @@ func DecryptTextAESGCM(key []byte, ciphertext []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
-// BytesToBase64 converts a byte array such as a key or ciphertext to a base64-encoded string for storage
-// as an env var, text file, database field, etc.
+// CreateHMACSHA256 creates a cryptographic hash of a plaintext message using the Keyed-Hash Message
+// Authentication Code (HMAC) method using the SHA-256 hashing algorithm. While the key can be any length
+// it should be 32 random bytes for optimal security. The output can be converted to a string for storage using
+// BytesToHex or BytesToBase64. For a secure way to compare the output with another hmac hash use CompareHMAC.
+func CreateHMACSHA256(key []byte, plaintext []byte) []byte {
+	hash := hmac.New(sha256.New, key)
+	hash.Write(plaintext)
+	return hash.Sum(nil)
+}
+
+// CreateHMACSHA512 creates a cryptographic hash of a plaintext message using the Keyed-Hash Message
+// Authentication Code (HMAC) method using the SHA-512 hashing algorithm. While the key can be any length
+// it should be 64 random bytes for optimal security. The output can be converted to a string for storage using
+// BytesToHex or BytesToBase64. For a secure way to compare the output with another hmac hash use CompareHMAC.
+func CreateHMACSHA512(key []byte, plaintext []byte) []byte {
+	hash := hmac.New(sha512.New, key)
+	hash.Write(plaintext)
+	return hash.Sum(nil)
+}
+
+// CompareHMAC is a secure way to compare two HMAC hash outputs for equality without leaking timing
+// side-channel information.
+func CompareHMAC(hashA []byte, hashB []byte) bool {
+	return hmac.Equal(hashA, hashB)
+}
+
+// BytesToHex converts a byte slice such as a key, hash, or ciphertext to a hexadecimal string for storage.
+func BytesToHex(seq []byte) string {
+	return hex.EncodeToString(seq)
+}
+
+// HexToBytes converts a hexadecimal string such as a stored key, hash, or ciphertext back into a byte slice.
+func HexToBytes(str string) ([]byte, error) {
+	seq, err := hex.DecodeString(str)
+	if err != nil {
+		return nil, err
+	}
+	return seq, nil
+}
+
+// BytesToBase64 converts a byte slice such as a key, hash, or ciphertext to a base64-encoded string for storage.
 func BytesToBase64(seq []byte) string {
 	return base64.StdEncoding.EncodeToString(seq)
 }
 
-// Base64ToBytes converts a base64-encoded string such as a key or ciphertext read in from an env var, text
-// file, or database field back into a byte array.
+// HexToBytes converts a base64-encoded string such as a stored key, hash, or ciphertext back into a byte slice.
 func Base64ToBytes(str string) ([]byte, error) {
 	seq, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
