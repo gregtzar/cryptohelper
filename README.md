@@ -2,9 +2,9 @@
 
 The `cryptohelper` package contains a collection of helper functions designed to streamline and document some common cryptographic patterns in golang web applications, using only the standard go crypto library.
 
-The functions can be used in your own project or copied and modified as a starting point for your own library. They are designed with secure best-practice considerations and are production ready.
+The functions can be used directly in your own projects or studied and copied as a starting point for your own library. They are designed with secure best-practice considerations and are production ready.
 
-The package is intended to be self-documenting and complete for the patterns it includes, and as such it may contain several functions such as `CompareHMAC`, `EncodeHex`, and `EncodeB64` which are very simple wrappers for equally simple underlying core library functions, but have been included for semantic consistency and completeness.
+The package is intended to be self-documenting and complete for the patterns it includes, and as such it may contain several functions such as `CompareHMAC()`, `EncodeHex()`, and `EncodeB64()` which are very simple wrappers for equally simple underlying core library functions, but have been included for semantic consistency and completeness.
 
 ## Supported Patterns
 
