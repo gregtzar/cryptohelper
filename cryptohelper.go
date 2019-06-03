@@ -123,7 +123,7 @@ func EncryptTextAESGCM(key []byte, plaintext []byte) ([]byte, error) {
 
 }
 
-// EncryptTextAESGCM decrypts a chunk of ciphertext which was encrypted using AES 128/192/256
+// DecryptTextAESGCM decrypts a chunk of ciphertext which was encrypted using AES 128/192/256
 // symmetrical encryption with the mode of operation used for the block cipher being GCM. This
 // function requires the same key used to encrypt the plaintext and also expects the 12-byte random
 // nonce used to encrypt the plaintext to be prepended to the ciphertext. If the EncryptTextAESGCM
