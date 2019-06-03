@@ -55,35 +55,35 @@ func GenerateCryptoSequence(length int) ([]byte, error) {
 
 // GenerateAES128Key is an alias for GenerateCryptoSequence(16).
 // An AES 128-bit key is expressed here as a byte slice. To obtain the plain text equivalent of this
-// key for storage use the BytesToBase64 or BytesToHex function.
+// key for storage use the EncodeB64 or EncodeHex function.
 func GenerateAES128Key() ([]byte, error) {
 	return GenerateCryptoSequence(AES128KeyLength)
 }
 
 // GenerateAES192Key is an alias for GenerateCryptoSequence(24).
 // An AES 192-bit key is expressed here as a byte slice. To obtain the plain text equivalent of this
-// key for storage use the BytesToBase64 or BytesToHex function.
+// key for storage use the EncodeB64 or EncodeHex function.
 func GenerateAES192Key() ([]byte, error) {
 	return GenerateCryptoSequence(AES192KeyLength)
 }
 
 // GenerateAES256Key is an alias for GenerateCryptoSequence(32).
 // An AES 256-bit key is expressed here as a byte slice. To obtain the plain text equivalent of this
-// key for storage use the BytesToBase64 or BytesToHex function.
+// key for storage use the EncodeB64 or EncodeHex function.
 func GenerateAES256Key() ([]byte, error) {
 	return GenerateCryptoSequence(AES256KeyLength)
 }
 
 // GenerateHMACSHA256Key is an alias for GenerateCryptoSequence(32).
 // An HMAC SHA-256 key is expressed here as a byte slice. To obtain the plain text equivalent of this
-// key for storage use the BytesToBase64 or BytesToHex function.
+// key for storage use the EncodeB64 or EncodeHex function.
 func GenerateHMACSHA256Key() ([]byte, error) {
 	return GenerateCryptoSequence(HMACSHA256KeyLength)
 }
 
 // GenerateHMACSHA512Key is an alias for GenerateCryptoSequence(64).
 // An HMAC SHA-256 key is expressed here as a byte slice. To obtain the plain text equivalent of this
-// key for storage use the BytesToBase64 or BytesToHex function.
+// key for storage use the EncodeB64 or EncodeHex function.
 func GenerateHMACSHA512Key() ([]byte, error) {
 	return GenerateCryptoSequence(HMACSHA512KeyLength)
 }
@@ -159,9 +159,9 @@ func DecryptTextAESGCM(key []byte, ciphertext []byte) ([]byte, error) {
 }
 
 // CreateHMACSHA256 creates a cryptographic hash of a plaintext message using the Keyed-Hash Message
-// Authentication Code (HMAC) method using the SHA-256 hashing algorithm. While the key can be any length
+// Authentication Code (HMAC) method and the SHA-256 hashing algorithm. While the key can be any length
 // it should be 32 random bytes for optimal security. The output can be converted to a string for storage using
-// BytesToHex or BytesToBase64. For a secure way to compare the output with another hmac hash use CompareHMAC.
+// EncodeHex or EncodeB64. For a secure way to compare the output with another hmac hash use CompareHMAC.
 func CreateHMACSHA256(key []byte, plaintext []byte) []byte {
 	hash := hmac.New(sha256.New, key)
 	hash.Write(plaintext)
@@ -169,9 +169,9 @@ func CreateHMACSHA256(key []byte, plaintext []byte) []byte {
 }
 
 // CreateHMACSHA512 creates a cryptographic hash of a plaintext message using the Keyed-Hash Message
-// Authentication Code (HMAC) method using the SHA-512 hashing algorithm. While the key can be any length
+// Authentication Code (HMAC) method and the SHA-512 hashing algorithm. While the key can be any length
 // it should be 64 random bytes for optimal security. The output can be converted to a string for storage using
-// BytesToHex or BytesToBase64. For a secure way to compare the output with another hmac hash use CompareHMAC.
+// EncodeHex or EncodeB64. For a secure way to compare the output with another hmac hash use CompareHMAC.
 func CreateHMACSHA512(key []byte, plaintext []byte) []byte {
 	hash := hmac.New(sha512.New, key)
 	hash.Write(plaintext)
@@ -184,13 +184,13 @@ func CompareHMAC(hashA []byte, hashB []byte) bool {
 	return hmac.Equal(hashA, hashB)
 }
 
-// BytesToHex converts a byte slice such as a key, hash, or ciphertext to a hexadecimal string for storage.
-func BytesToHex(seq []byte) string {
+// EncodeHex converts a byte slice such as a key, hash, or ciphertext to a hexadecimal string for storage.
+func EncodeHex(seq []byte) string {
 	return hex.EncodeToString(seq)
 }
 
-// HexToBytes converts a hexadecimal string such as a stored key, hash, or ciphertext back into a byte slice.
-func HexToBytes(str string) ([]byte, error) {
+// DecodeHex converts a hexadecimal string such as a stored key, hash, or ciphertext back into a byte slice.
+func DecodeHex(str string) ([]byte, error) {
 	seq, err := hex.DecodeString(str)
 	if err != nil {
 		return nil, err
@@ -198,13 +198,13 @@ func HexToBytes(str string) ([]byte, error) {
 	return seq, nil
 }
 
-// BytesToBase64 converts a byte slice such as a key, hash, or ciphertext to a base64-encoded string for storage.
-func BytesToBase64(seq []byte) string {
+// EncodeB64 converts a byte slice such as a key, hash, or ciphertext to a base64-encoded string for storage.
+func EncodeB64(seq []byte) string {
 	return base64.StdEncoding.EncodeToString(seq)
 }
 
-// HexToBytes converts a base64-encoded string such as a stored key, hash, or ciphertext back into a byte slice.
-func Base64ToBytes(str string) ([]byte, error) {
+// DecodeB64 converts a base64-encoded string such as a stored key, hash, or ciphertext back into a byte slice.
+func DecodeB64(str string) ([]byte, error) {
 	seq, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
 		return nil, err
