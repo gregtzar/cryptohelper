@@ -1,6 +1,6 @@
 # go-cryptohelper
 
-The `cryptohelper` package contains a collection of helper functions designed to streamline and document some common cryptographic patterns in golang web applications, using only the standard go crypto library.
+The `cryptohelper` package contains a collection of helper functions designed to document and streamline some common cryptographic patterns in golang web applications using only the standard go crypto library.
 
 The functions can be used directly in your own projects or studied and copied as a starting point for your own library. They are designed with secure best-practice considerations and are production ready.
 
@@ -12,11 +12,8 @@ The library currently supports the following patterns:
 
 * Psuedo-random security code / pin number generation
 * Cryptographically secure key generation
-  * AES 128-bit
-  * AES 192-bit
-  * AES 256-bit
-  * HMAC SHA-256
-  * HMAC SHA-512
+  * AES 128-bit/192-bit/256-bit
+  * HMAC SHA-256/SHA-512
   * Custom / any length
 * AES encryption/decryption
 * HMAC hashing

@@ -82,7 +82,7 @@ func GenerateHMACSHA256Key() ([]byte, error) {
 }
 
 // GenerateHMACSHA512Key is an alias for GenerateCryptoSequence(64).
-// An HMAC SHA-256 key is expressed here as a byte slice. To obtain the plain text equivalent of this
+// An HMAC SHA-512 key is expressed here as a byte slice. To obtain the plain text equivalent of this
 // key for storage use the EncodeB64 or EncodeHex function.
 func GenerateHMACSHA512Key() ([]byte, error) {
 	return GenerateCryptoSequence(HMACSHA512KeyLength)
