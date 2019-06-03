@@ -1,6 +1,6 @@
-# go-cryptohelper
+# cryptohelper
 
-The `cryptohelper` package contains a collection of helper functions designed to document and streamline some common cryptographic patterns in golang web applications using only the standard go crypto library.
+The go `cryptohelper` package contains a collection of helper functions designed to document and streamline some common cryptographic patterns in golang web applications using only the standard go crypto library.
 
 The functions can be used directly in your own projects or studied and copied as a starting point for your own library. They are designed with secure best-practice considerations and are production ready.
 
@@ -8,7 +8,7 @@ The package is intended to be self-documenting and complete for the patterns it 
 
 ## API Documentation
 
-View the package [API Documentation](https://godoc.org/github.com/gregtzar/go-cryptohelper) on [godoc.org](https://godoc.org/github.com/gregtzar/go-cryptohelper).
+View the package API documentation on godoc.org: [https://godoc.org/github.com/gregtzar/cryptohelper](https://godoc.org/github.com/gregtzar/cryptohelper).
 
 ## Supported Patterns
 
