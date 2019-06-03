@@ -2,7 +2,7 @@ package cryptohelper_test
 
 import (
 	"bytes"
-	"github.com/gregtzar/go-cryptohelper"
+	"github.com/gregtzar/cryptohelper"
 	"testing"
 )
 
