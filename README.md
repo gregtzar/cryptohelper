@@ -8,7 +8,7 @@ The package is intended to be self-documenting and complete for the patterns it 
 
 ## API Documentation
 
-View the package API documentation on godoc.org: [https://godoc.org/github.com/gregtzar/cryptohelper](https://godoc.org/github.com/gregtzar/cryptohelper).
+View the package API documentation on godoc.org: [https://godoc.org/github.com/gregtczap/cryptohelper](https://godoc.org/github.com/gregtczap/cryptohelper).
 
 ## Supported Patterns
 
