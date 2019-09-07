@@ -1,3 +1,3 @@
-module github.com/gregtzar/cryptohelper
+module github.com/gregtczap/cryptohelper
 
 go 1.12
