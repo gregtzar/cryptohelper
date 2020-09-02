@@ -49,6 +49,58 @@ func TestGeneratePIN(t *testing.T) {
 	}
 }
 
+func TestGenerateCryptoPIN(t *testing.T) {
+
+	type tcase struct {
+		expectedLen int
+	}
+
+	fn := func(tc tcase) func(t *testing.T) {
+		return func(t *testing.T) {
+
+			pinA, err := cryptohelper.GenerateCryptoPIN(tc.expectedLen)
+			if err != nil {
+				t.Error("unexpected error ", err)
+				return
+			}
+
+			pinB, err := cryptohelper.GenerateCryptoPIN(tc.expectedLen)
+			if err != nil {
+				t.Error("unexpected error ", err)
+				return
+			}
+
+			if len(pinA) != tc.expectedLen {
+				t.Errorf("expected len(%v) but got (%v)", tc.expectedLen, len(pinA))
+				return
+			}
+
+			if len(pinB) != tc.expectedLen {
+				t.Errorf("expected len(%v) but got (%v)", tc.expectedLen, len(pinB))
+				return
+			}
+
+			if pinA == pinB {
+				t.Error("expected not equals")
+				return
+			}
+		}
+	}
+
+	tests := map[string]tcase{
+		"4 character random pin": {
+			expectedLen: 4,
+		},
+		"20 character random pin": {
+			expectedLen: 20,
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, fn(tc))
+	}
+}
+
 func TestGenerateCryptoSequence(t *testing.T) {
 
 	type tcase struct {
