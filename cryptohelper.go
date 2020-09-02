@@ -10,6 +10,8 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
+	"fmt"
+	"math/big"
 	mrand "math/rand"
 	"strconv"
 	"time"
@@ -37,6 +39,26 @@ func GeneratePIN(length int) string {
 		pin += strconv.Itoa(mrand.Intn(9))
 	}
 	return pin
+}
+
+// GenerateCryptoPIN creates a cryptographically secure random pin number style security code of the designated character length.
+// The output of this function is suitable for generating pin numbers for use in a two-factor auth system
+// which uses security code verification over a medium like SMS or email.
+func GenerateCryptoPIN(length int) (string, error) {
+
+	if length < 0 {
+		return "", nil
+	}
+
+	// max is 10 ** length, not inclusive
+	max := (&big.Int{}).Exp(big.NewInt(10), big.NewInt(int64(length)), nil)
+
+	pin, err := crand.Int(crand.Reader, max)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprint(pin), nil
 }
 
 // GenerateCryptoSequence returns a cryptographically secure psuedo-random sequence of bytes of the
