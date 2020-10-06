@@ -58,7 +58,9 @@ func GenerateCryptoPIN(length int) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprint(pin), nil
+	fmtStr := "%0" + strconv.Itoa(length) + "v"
+
+	return fmt.Sprintf(fmtStr, pin), nil
 }
 
 // GenerateCryptoSequence returns a cryptographically secure psuedo-random sequence of bytes of the
