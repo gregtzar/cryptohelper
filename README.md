@@ -15,6 +15,7 @@ The package is intended to be self-documenting and complete for the patterns it 
 The library currently supports the following patterns:
 
 * Psuedo-random security code / pin number generation
+* Cryptographically secure random security code / pin number generation
 * Cryptographically secure key generation
   * AES 128-bit/192-bit/256-bit
   * HMAC SHA-256/SHA-512
